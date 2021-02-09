@@ -42,21 +42,21 @@ type postgres struct{ db *sql.DB }
 
 func (p *postgres) Save(url string) (string, error) {
 	var id string
-	err := p.db.QueryRow("INSERT INTO shortener(url,visited,count) VALUES($1,$2,$3) returning uuid;", url, false, 0).Scan(&id)
+	err := p.db.QueryRow("INSERT INTO shortener(url, visited, count) VALUES($1,$2,$3) returning uuid;", url, false, 0).Scan(&id)
 	if err != nil {
 		return "", err
 	}
-	return base62.Encode(id), nil
+	return id, nil
 }
 
 func (p *postgres) Load(code string) (string, error) {
-	id, err := base62.Decode(code)
+	/*id, err := base62.Decode(code)
 	if err != nil {
 		return "", err
-	}
+	}*/
 
 	var url string
-	err = p.db.QueryRow("update shortener set visited=true, count = count + 1 where uuid=$1 RETURNING url", id).Scan(&url)
+	err = p.db.QueryRow("update shortener set visited=true, count = count + 1 where uuid=$1 RETURNING url", code).Scan(&url)
 	if err != nil {
 		return "", err
 	}
@@ -64,14 +64,15 @@ func (p *postgres) Load(code string) (string, error) {
 }
 
 func (p *postgres) LoadInfo(code string) (*storage.Item, error) {
-	id, err := base62.Decode(code)
-	if err != nil {
+	/*id, err := base62.Decode(code)
+	  if err != nil {
 		return nil, err
-	}
+	}*/
 
 	var item storage.Item
-	err = p.db.QueryRow("SELECT url, visited, count FROM shortener where uuid=$1 limit 1", id).
+	err = p.db.QueryRow("SELECT url, visited, count FROM shortener where uuid=$1 limit 1", code).
 		Scan(&item.URL, &item.Visited, &item.Count)
+	
 	if err != nil {
 		return nil, err
 	}

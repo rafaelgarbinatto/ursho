@@ -8,7 +8,7 @@
   },
   "redis": {},
   "files_system": {
-    "path": "/users/rafaelgarbinatto/ursho"
+    "path": "/home/rafaelng/projetos/ursho"
   },
   "postgres": {
     "host": "app_postgres",
