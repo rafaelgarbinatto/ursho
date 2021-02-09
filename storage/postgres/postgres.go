@@ -7,8 +7,8 @@ import (
 	// This loads the postgres drivers.
 	_ "github.com/lib/pq"
 
-	"github.com/douglasmakey/ursho/base62"
-	"github.com/douglasmakey/ursho/storage"
+	"github.com/rafaelgarbinatto/ursho/base62"
+	"github.com/rafaelgarbinatto/ursho/storage"
 )
 
 // New returns a postgres backed storage service.
@@ -29,8 +29,7 @@ func New(host, port, user, password, dbName string) (storage.Service, error) {
 	}
 
 	// Create table if not exists
-	strQuery := "CREATE TABLE IF NOT EXISTS shortener (uid serial NOT NULL, url VARCHAR not NULL, " +
-		"visited boolean DEFAULT FALSE, count INTEGER DEFAULT 0);"
+	strQuery := "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";CREATE EXTENSION IF NOT EXISTS \"pgcrypto\";CREATE TABLE shortener( uuid text default crypt(uuid_generate_v4()::text, 'domain.com.br') not null, url varchar not null, visited boolean default false, count integer default 0 );"
 
 	_, err = db.Exec(strQuery)
 	if err != nil {
@@ -42,8 +41,8 @@ func New(host, port, user, password, dbName string) (storage.Service, error) {
 type postgres struct{ db *sql.DB }
 
 func (p *postgres) Save(url string) (string, error) {
-	var id int64
-	err := p.db.QueryRow("INSERT INTO shortener(url,visited,count) VALUES($1,$2,$3) returning uid;", url, false, 0).Scan(&id)
+	var id string
+	err := p.db.QueryRow("INSERT INTO shortener(url,visited,count) VALUES($1,$2,$3) returning uuid;", url, false, 0).Scan(&id)
 	if err != nil {
 		return "", err
 	}
@@ -57,7 +56,7 @@ func (p *postgres) Load(code string) (string, error) {
 	}
 
 	var url string
-	err = p.db.QueryRow("update shortener set visited=true, count = count + 1 where uid=$1 RETURNING url", id).Scan(&url)
+	err = p.db.QueryRow("update shortener set visited=true, count = count + 1 where uuid=$1 RETURNING url", id).Scan(&url)
 	if err != nil {
 		return "", err
 	}
@@ -71,7 +70,7 @@ func (p *postgres) LoadInfo(code string) (*storage.Item, error) {
 	}
 
 	var item storage.Item
-	err = p.db.QueryRow("SELECT url, visited, count FROM shortener where uid=$1 limit 1", id).
+	err = p.db.QueryRow("SELECT url, visited, count FROM shortener where uuid=$1 limit 1", id).
 		Scan(&item.URL, &item.Visited, &item.Count)
 	if err != nil {
 		return nil, err

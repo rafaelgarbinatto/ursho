@@ -1,8 +1,8 @@
 FROM golang as builder
 
-ADD . /go/src/github.com/douglasmakey/ursho/
+ADD . /go/src/github.com/rafaelgarbinatto/ursho/
 
-WORKDIR /go/src/github.com/douglasmakey/ursho/
+WORKDIR /go/src/github.com/rafaelgarbinatto/ursho/
 
 RUN go get
 
@@ -12,7 +12,7 @@ FROM scratch
 
 ENV PORT 8080
 
-COPY --from=builder /go/src/github.com/douglasmakey/ursho/ursho /app/
+COPY --from=builder /go/src/github.com/rafaelgarbinatto/ursho/ursho /app/
 ADD config/config.json /app/config/
 
 WORKDIR /app

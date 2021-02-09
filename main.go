@@ -10,9 +10,9 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/douglasmakey/ursho/config"
-	"github.com/douglasmakey/ursho/handler"
-	"github.com/douglasmakey/ursho/storage/postgres"
+	"github.com/rafaelgarbinatto/ursho/config"
+	"github.com/rafaelgarbinatto/ursho/handler"
+	"github.com/rafaelgarbinatto/ursho/storage/postgres"
 )
 
 func main() {
