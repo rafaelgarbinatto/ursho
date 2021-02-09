@@ -13,9 +13,9 @@ const (
 
 // Encode number to base62.
 func Encode(n string) string {
-	if n == nil {
+	/*if n == nil {
 		return nil
-	}
+	}*/
 
 	s := ""
 	/*for ; n > 0; n = n / length {
