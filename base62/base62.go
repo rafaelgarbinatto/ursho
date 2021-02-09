@@ -1,8 +1,8 @@
 package base62
 
 import (
-	"fmt"
-	"strings"
+	//"fmt"
+	//"strings"
 )
 
 // All characters
@@ -13,8 +13,8 @@ const (
 
 // Encode number to base62.
 func Encode(n string) string {
-	if n == 0 {
-		return string(alphabet[0])
+	if n == nil {
+		return nil
 	}
 
 	s := ""
