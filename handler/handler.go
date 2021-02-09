@@ -74,7 +74,7 @@ func (h handler) encode(w io.Writer, r *http.Request) (interface{}, int, error) 
 	return h.prefix + c, http.StatusCreated, nil
 }
 
-func (h handler) decode(w io.Writer, r *http.Request) (interface{}, string, error) {
+func (h handler) decode(w io.Writer, r *http.Request) (interface{}, int, error) {
 	if r.Method != http.MethodGet {
 		return nil, http.StatusMethodNotAllowed, fmt.Errorf("Method %s not allowed", r.Method)
 	}
