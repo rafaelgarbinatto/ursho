@@ -8,11 +8,11 @@ import (
 // All characters
 const (
 	alphabet = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-	length   = int64(len(alphabet))
+	length   = string(len(alphabet))
 )
 
 // Encode number to base62.
-func Encode(n int64) string {
+func Encode(n string) string {
 	if n == 0 {
 		return string(alphabet[0])
 	}
@@ -25,14 +25,14 @@ func Encode(n int64) string {
 }
 
 // Decode converts a base62 token to int.
-func Decode(key string) (int64, error) {
-	var n int64
+func Decode(key string) (string, error) {
+	var n string
 	for _, c := range []byte(key) {
 		i := strings.IndexByte(alphabet, c)
 		if i < 0 {
 			return 0, fmt.Errorf("unexpected character %c in base62 literal", c)
 		}
-		n = length*n + int64(i)
+		n = length*n + string(i)
 	}
 	return n, nil
 }
